@@ -181,6 +181,8 @@ export default function App() {
     "May 2026": [],
   });
   const [deliveredOpen, setDeliveredOpen] = useState(false);
+  const [editingBrief, setEditingBrief]   = useState(false);
+  const [editDraft, setEditDraft]         = useState<{ clientRef: string; status: ProjectStatus; owner: string; brand: string; folderLink: string; notes: string }>({ clientRef: "", status: "Brief Received", owner: "", brand: "", folderLink: "", notes: "" });
 
   // Form state
   const [formClientRef, setFormClientRef]   = useState("");
@@ -263,8 +265,27 @@ export default function App() {
     setNextDelId(2);
   };
 
-  const openBrief = (p: Project) => { setSelectedBrief(p); setView("brief"); };
-  const backToDash = () => { setView("dashboard"); setSelectedBrief(null); };
+  const openBrief = (p: Project) => { setSelectedBrief(p); setView("brief"); setEditingBrief(false); };
+  const backToDash = () => { setView("dashboard"); setSelectedBrief(null); setEditingBrief(false); };
+
+  const startEditBrief = (p: Project) => {
+    setEditDraft({ clientRef: p.clientRef, status: p.status, owner: p.owner, brand: p.brand, folderLink: p.folderLink || "", notes: p.notes || "" });
+    setEditingBrief(true);
+  };
+  const handleSaveBrief = () => {
+    if (!selectedBrief) return;
+    const updated: Project = { ...selectedBrief, ...editDraft, folderLink: editDraft.folderLink || undefined, notes: editDraft.notes || undefined };
+    setMonthData(prev => {
+      const next = { ...prev };
+      for (const month of Object.keys(next)) {
+        const idx = next[month].findIndex(x => x.id === selectedBrief.id);
+        if (idx !== -1) { const arr = [...next[month]]; arr[idx] = updated; next[month] = arr; break; }
+      }
+      return next;
+    });
+    setSelectedBrief(updated);
+    setEditingBrief(false);
+  };
 
   // ─── BRIEF VIEW ───────────────────────────────────────────────
   if (view === "brief" && selectedBrief) {
@@ -287,32 +308,73 @@ export default function App() {
                 {p.clientRef ? `${p.clientRef}  ·  ` : ""}{p.id}
               </p>
             </div>
-            <span style={{ background: ss.bg, color: ss.color, border: ss.border || "1px solid transparent", padding: "6px 16px", borderRadius: "20px", fontSize: "13px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: ss.dot }} />
-              {p.status}
-            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              {!editingBrief ? (
+                <>
+                  <span style={{ background: ss.bg, color: ss.color, border: ss.border || "1px solid transparent", padding: "6px 16px", borderRadius: "20px", fontSize: "13px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                    <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: ss.dot }} />
+                    {p.status}
+                  </span>
+                  <button onClick={() => startEditBrief(p)} style={{ background: OLIVE, color: "white", border: "none", borderRadius: "7px", padding: "8px 18px", fontSize: "13px", cursor: "pointer", fontWeight: 600 }}>
+                    Edit Brief
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button onClick={() => setEditingBrief(false)} style={{ background: "white", color: "#555", border: "1px solid #ddd", borderRadius: "7px", padding: "8px 16px", fontSize: "13px", cursor: "pointer" }}>
+                    Cancel
+                  </button>
+                  <button onClick={handleSaveBrief} style={{ background: MAROON, color: "white", border: "none", borderRadius: "7px", padding: "8px 18px", fontSize: "13px", cursor: "pointer", fontWeight: 600 }}>
+                    Save Changes
+                  </button>
+                </>
+              )}
+            </div>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
             {/* Left */}
             <div style={{ background: "white", borderRadius: "12px", padding: "1.5rem", boxShadow: "0 1px 6px rgba(0,0,0,0.07)" }}>
               <h3 style={{ margin: "0 0 1rem", fontSize: "15px", fontWeight: 700, color: "#1a1a1a" }}>Project Details</h3>
+
+              {/* Read-only rows */}
               {([
-                { label: "Internal Project ID", value: p.id,              mono: true  },
-                { label: "Client Reference",    value: p.clientRef || "—" },
-                { label: "Deliverable",          value: p.deliverable      },
-                { label: "Type",                 value: p.type             },
-                { label: "Quantity",             value: String(p.qty)      },
+                { label: "Internal Project ID", value: p.id,          mono: true },
+                { label: "Deliverable",          value: p.deliverable },
+                { label: "Type",                 value: p.type        },
+                { label: "Quantity",             value: String(p.qty) },
                 { label: "Credits",              value: String(p.credits), accent: true },
-                { label: "Owner",                value: p.owner            },
-                { label: "Brand",                value: p.brand            },
-                { label: "Date",                 value: p.date             },
+                { label: "Date",                 value: p.date        },
               ] as { label: string; value: string; mono?: boolean; accent?: boolean }[]).map(row => (
                 <div key={row.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f5f5f5", padding: "9px 0" }}>
                   <span style={{ fontSize: "12px", color: "#888" }}>{row.label}</span>
                   <span style={{ fontSize: "13px", color: row.accent ? MAROON : "#2a2a2a", fontWeight: row.accent ? 700 : 500, fontFamily: row.mono ? "monospace" : "inherit" }}>{row.value}</span>
                 </div>
               ))}
+
+              {/* Editable rows */}
+              {([
+                { label: "Client Reference", field: "clientRef" as const },
+                { label: "Owner",            field: "owner"     as const },
+                { label: "Brand",            field: "brand"     as const },
+              ]).map(row => (
+                <div key={row.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f5f5f5", padding: "7px 0", gap: "16px" }}>
+                  <span style={{ fontSize: "12px", color: "#888", flexShrink: 0 }}>{row.label}</span>
+                  {editingBrief
+                    ? <input value={editDraft[row.field]} onChange={e => setEditDraft(d => ({ ...d, [row.field]: e.target.value }))} style={{ ...inp, padding: "5px 8px", fontSize: "13px", textAlign: "right", maxWidth: "200px" }} />
+                    : <span style={{ fontSize: "13px", color: "#2a2a2a", fontWeight: 500 }}>{p[row.field] || "—"}</span>}
+                </div>
+              ))}
+
+              {/* Status (editable) */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "7px 0", gap: "16px" }}>
+                <span style={{ fontSize: "12px", color: "#888", flexShrink: 0 }}>Status</span>
+                {editingBrief
+                  ? <select value={editDraft.status} onChange={e => setEditDraft(d => ({ ...d, status: e.target.value as ProjectStatus }))} style={{ ...inp, padding: "5px 8px", fontSize: "13px", width: "auto" }}>
+                      {(["Brief Received", "In Progress", "For Review", "Delivered", "Waiting", "Project Cancelled"] as ProjectStatus[]).map(s => <option key={s}>{s}</option>)}
+                    </select>
+                  : <StatusBadge status={p.status} />}
+              </div>
             </div>
 
             {/* Right */}
@@ -351,16 +413,20 @@ export default function App() {
 
               <div style={{ background: "white", borderRadius: "12px", padding: "1.5rem", boxShadow: "0 1px 6px rgba(0,0,0,0.07)" }}>
                 <div style={{ marginBottom: "16px" }}>
-                  <div style={{ ...lbl, marginBottom: "4px" }}>Project Folder</div>
-                  {p.folderLink
-                    ? <a href={p.folderLink} target="_blank" rel="noreferrer" style={{ fontSize: "13px", color: OLIVE, wordBreak: "break-all" }}>{p.folderLink}</a>
-                    : <span style={{ fontSize: "13px", color: "#ccc" }}>No folder link provided</span>}
+                  <div style={{ ...lbl, marginBottom: "6px" }}>Project Folder</div>
+                  {editingBrief
+                    ? <input value={editDraft.folderLink} onChange={e => setEditDraft(d => ({ ...d, folderLink: e.target.value }))} placeholder="Paste Google Drive or folder link" style={inp} />
+                    : p.folderLink
+                      ? <a href={p.folderLink} target="_blank" rel="noreferrer" style={{ fontSize: "13px", color: OLIVE, wordBreak: "break-all" }}>{p.folderLink}</a>
+                      : <span style={{ fontSize: "13px", color: "#ccc" }}>No folder link provided</span>}
                 </div>
                 <div>
-                  <div style={{ ...lbl, marginBottom: "4px" }}>Notes</div>
-                  {p.notes
-                    ? <p style={{ margin: 0, fontSize: "13px", color: "#555", lineHeight: 1.6 }}>{p.notes}</p>
-                    : <span style={{ fontSize: "13px", color: "#ccc" }}>No notes</span>}
+                  <div style={{ ...lbl, marginBottom: "6px" }}>Notes</div>
+                  {editingBrief
+                    ? <textarea value={editDraft.notes} onChange={e => setEditDraft(d => ({ ...d, notes: e.target.value }))} rows={3} placeholder="Add notes…" style={{ ...inp, resize: "vertical" }} />
+                    : p.notes
+                      ? <p style={{ margin: 0, fontSize: "13px", color: "#555", lineHeight: 1.6 }}>{p.notes}</p>
+                      : <span style={{ fontSize: "13px", color: "#ccc" }}>No notes</span>}
                 </div>
               </div>
             </div>
