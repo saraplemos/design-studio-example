@@ -1,8 +1,8 @@
 import { useState, type CSSProperties } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-const MAROON = "#8B0000";
-const OLIVE  = "#556B2F";
+const ORANGE = "#E05535";   // Adapt. Brand Consultants primary orange
+const SLATE  = "#737679";   // R115 G118 B123
 const MONTHLY_CAP = 259;
 
 type ProjectStatus = "Delivered" | "For Review" | "In Progress" | "Brief Received" | "Waiting" | "Project Cancelled";
@@ -150,7 +150,7 @@ function ProjectTable({ projects, onViewBrief }: { projects: Project[]; onViewBr
               <td style={{ padding: "10px 12px", color: "#2a2a2a", maxWidth: "160px" }}>{p.deliverable}</td>
               <td style={{ padding: "10px 12px", color: "#666", whiteSpace: "nowrap" }}>{p.type}</td>
               <td style={{ padding: "10px 12px", color: "#666", textAlign: "center" }}>{p.qty}</td>
-              <td style={{ padding: "10px 12px", color: MAROON, fontWeight: 700, textAlign: "center" }}>{p.credits}</td>
+              <td style={{ padding: "10px 12px", color: ORANGE, fontWeight: 700, textAlign: "center" }}>{p.credits}</td>
               <td style={{ padding: "10px 12px" }}><StatusBadge status={p.status} /></td>
               <td style={{ padding: "10px 12px", color: "#555", whiteSpace: "nowrap" }}>{p.owner}</td>
               <td style={{ padding: "10px 12px", color: "#555", whiteSpace: "nowrap" }}>{p.brand}</td>
@@ -158,7 +158,7 @@ function ProjectTable({ projects, onViewBrief }: { projects: Project[]; onViewBr
               <td style={{ padding: "10px 12px" }}>
                 <button
                   onClick={() => onViewBrief(p)}
-                  style={{ background: "none", border: `1px solid ${MAROON}`, color: MAROON, borderRadius: "5px", padding: "4px 10px", fontSize: "11px", cursor: "pointer", whiteSpace: "nowrap" }}
+                  style={{ background: "none", border: `1px solid ${ORANGE}`, color: ORANGE, borderRadius: "5px", padding: "4px 10px", fontSize: "11px", cursor: "pointer", whiteSpace: "nowrap" }}
                 >
                   View Brief
                 </button>
@@ -295,7 +295,7 @@ export default function App() {
     const isCancelled = p.status === "Project Cancelled";
 
     return (
-      <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", background: "#F4F4F4", minHeight: "100vh" }}>
+      <div style={{ fontFamily: "'Open Sans', system-ui, sans-serif", background: "#F4F4F4", minHeight: "100vh" }}>
         <div style={{ maxWidth: "960px", margin: "0 auto", padding: "2rem 1.5rem" }}>
           <button onClick={backToDash} style={{ background: "none", border: "none", cursor: "pointer", color: "#555", fontSize: "14px", display: "flex", alignItems: "center", gap: "6px", marginBottom: "1.25rem", padding: 0 }}>
             ← Back to Dashboard
@@ -315,7 +315,7 @@ export default function App() {
                     <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: ss.dot }} />
                     {p.status}
                   </span>
-                  <button onClick={() => startEditBrief(p)} style={{ background: OLIVE, color: "white", border: "none", borderRadius: "7px", padding: "8px 18px", fontSize: "13px", cursor: "pointer", fontWeight: 600 }}>
+                  <button onClick={() => startEditBrief(p)} style={{ background: SLATE, color: "white", border: "none", borderRadius: "7px", padding: "8px 18px", fontSize: "13px", cursor: "pointer", fontWeight: 600 }}>
                     Edit Brief
                   </button>
                 </>
@@ -324,7 +324,7 @@ export default function App() {
                   <button onClick={() => setEditingBrief(false)} style={{ background: "white", color: "#555", border: "1px solid #ddd", borderRadius: "7px", padding: "8px 16px", fontSize: "13px", cursor: "pointer" }}>
                     Cancel
                   </button>
-                  <button onClick={handleSaveBrief} style={{ background: MAROON, color: "white", border: "none", borderRadius: "7px", padding: "8px 18px", fontSize: "13px", cursor: "pointer", fontWeight: 600 }}>
+                  <button onClick={handleSaveBrief} style={{ background: ORANGE, color: "white", border: "none", borderRadius: "7px", padding: "8px 18px", fontSize: "13px", cursor: "pointer", fontWeight: 600 }}>
                     Save Changes
                   </button>
                 </>
@@ -348,7 +348,7 @@ export default function App() {
               ] as { label: string; value: string; mono?: boolean; accent?: boolean }[]).map(row => (
                 <div key={row.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f5f5f5", padding: "9px 0" }}>
                   <span style={{ fontSize: "12px", color: "#888" }}>{row.label}</span>
-                  <span style={{ fontSize: "13px", color: row.accent ? MAROON : "#2a2a2a", fontWeight: row.accent ? 700 : 500, fontFamily: row.mono ? "monospace" : "inherit" }}>{row.value}</span>
+                  <span style={{ fontSize: "13px", color: row.accent ? ORANGE : "#2a2a2a", fontWeight: row.accent ? 700 : 500, fontFamily: row.mono ? "monospace" : "inherit" }}>{row.value}</span>
                 </div>
               ))}
 
@@ -387,16 +387,16 @@ export default function App() {
                   return (
                     <div key={stage} style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-                        <div style={{ width: "26px", height: "26px", borderRadius: "50%", background: completed ? MAROON : current ? "white" : "#f0f0f0", border: current ? `2px solid ${MAROON}` : completed ? "none" : "2px solid #e0e0e0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: 700, color: completed ? "white" : current ? MAROON : "#ccc" }}>
+                        <div style={{ width: "26px", height: "26px", borderRadius: "50%", background: completed ? ORANGE : current ? "white" : "#f0f0f0", border: current ? `2px solid ${ORANGE}` : completed ? "none" : "2px solid #e0e0e0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: 700, color: completed ? "white" : current ? ORANGE : "#ccc" }}>
                           {completed ? "✓" : i + 1}
                         </div>
                         {i < STATUS_STAGES.length - 1 && (
-                          <div style={{ width: "2px", height: "20px", background: completed ? MAROON : "#e8e8e8", margin: "2px 0" }} />
+                          <div style={{ width: "2px", height: "20px", background: completed ? ORANGE : "#e8e8e8", margin: "2px 0" }} />
                         )}
                       </div>
                       <div style={{ paddingTop: "3px", paddingBottom: i < STATUS_STAGES.length - 1 ? "18px" : "0" }}>
                         <div style={{ fontSize: "13px", fontWeight: current ? 700 : 500, color: completed || current ? "#1a1a1a" : "#bbb" }}>{stage}</div>
-                        {current && <div style={{ fontSize: "11px", color: MAROON, marginTop: "1px" }}>Current stage</div>}
+                        {current && <div style={{ fontSize: "11px", color: ORANGE, marginTop: "1px" }}>Current stage</div>}
                       </div>
                     </div>
                   );
@@ -417,7 +417,7 @@ export default function App() {
                   {editingBrief
                     ? <input value={editDraft.folderLink} onChange={e => setEditDraft(d => ({ ...d, folderLink: e.target.value }))} placeholder="Paste Google Drive or folder link" style={inp} />
                     : p.folderLink
-                      ? <a href={p.folderLink} target="_blank" rel="noreferrer" style={{ fontSize: "13px", color: OLIVE, wordBreak: "break-all" }}>{p.folderLink}</a>
+                      ? <a href={p.folderLink} target="_blank" rel="noreferrer" style={{ fontSize: "13px", color: SLATE, wordBreak: "break-all" }}>{p.folderLink}</a>
                       : <span style={{ fontSize: "13px", color: "#ccc" }}>No folder link provided</span>}
                 </div>
                 <div>
@@ -439,7 +439,7 @@ export default function App() {
   // ─── FORM VIEW ────────────────────────────────────────────────
   if (view === "form") {
     return (
-      <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", background: "#F4F4F4", minHeight: "100vh" }}>
+      <div style={{ fontFamily: "'Open Sans', system-ui, sans-serif", background: "#F4F4F4", minHeight: "100vh" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "2rem 1.5rem" }}>
           <button onClick={backToDash} style={{ background: "none", border: "none", cursor: "pointer", color: "#555", fontSize: "14px", display: "flex", alignItems: "center", gap: "6px", marginBottom: "1.25rem", padding: 0 }}>
             ← Back to Dashboard
@@ -498,7 +498,7 @@ export default function App() {
               <div style={{ marginBottom: "16px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
                   <label style={{ ...lbl, marginBottom: 0 }}>Deliverables</label>
-                  <button onClick={addFormDel} style={{ background: OLIVE, color: "white", border: "none", borderRadius: "6px", padding: "6px 14px", fontSize: "12px", cursor: "pointer", fontWeight: 600 }}>+ Add Deliverable</button>
+                  <button onClick={addFormDel} style={{ background: SLATE, color: "white", border: "none", borderRadius: "6px", padding: "6px 14px", fontSize: "12px", cursor: "pointer", fontWeight: 600 }}>+ Add Deliverable</button>
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 130px 70px 28px", gap: "8px", marginBottom: "6px" }}>
                   {["Deliverable", "Type", "Qty", ""].map(h => (
@@ -530,7 +530,7 @@ export default function App() {
                 <textarea value={formNotes} onChange={e => setFormNotes(e.target.value)} rows={3} placeholder="Any additional context, references, or requirements…" style={{ ...inp, resize: "vertical" }} />
               </div>
 
-              <button onClick={handleCreate} style={{ width: "100%", background: OLIVE, color: "white", border: "none", borderRadius: "8px", padding: "13px", fontSize: "15px", cursor: "pointer", fontWeight: 700 }}>
+              <button onClick={handleCreate} style={{ width: "100%", background: SLATE, color: "white", border: "none", borderRadius: "8px", padding: "13px", fontSize: "15px", cursor: "pointer", fontWeight: 700 }}>
                 Create Project Request
               </button>
             </div>
@@ -545,7 +545,7 @@ export default function App() {
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f0f0f0", paddingBottom: "12px", marginBottom: "10px" }}>
                   <span style={{ fontSize: "13px", color: "#777" }}>Total Credits</span>
-                  <span style={{ fontSize: "18px", fontWeight: 700, color: MAROON }}>{formTotalCredits}</span>
+                  <span style={{ fontSize: "18px", fontWeight: 700, color: ORANGE }}>{formTotalCredits}</span>
                 </div>
                 <p style={{ fontSize: "11px", color: "#aaa", margin: "0 0 16px", lineHeight: 1.6 }}>Final number of credits to be calculated once full brief submitted</p>
                 <div style={{ background: "#FEF3E2", border: "1px solid #F6AD55", borderRadius: "8px", padding: "12px 14px", marginBottom: "16px" }}>
@@ -584,7 +584,7 @@ export default function App() {
   ];
 
   return (
-    <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", background: "#F4F4F4", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "'Open Sans', system-ui, sans-serif", background: "#F4F4F4", minHeight: "100vh" }}>
 
       {/* Header */}
       <div style={{ background: "white", borderBottom: "1px solid #e8e8e8", padding: "14px 2rem" }}>
@@ -597,7 +597,13 @@ export default function App() {
               <p style={{ margin: "3px 0 0", fontSize: "12px", color: "#999" }}>Project Progress & Monthly Points Usage</p>
             </div>
             <div style={{ width: "1px", height: "30px", background: "#e8e8e8" }} />
-            <div style={{ border: "1.5px dashed #d0d0d0", borderRadius: "6px", padding: "6px 14px", color: "#bbb", fontSize: "11px", letterSpacing: "0.07em", whiteSpace: "nowrap" }}>AGENCY LOGO</div>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "3px", padding: "2px 0" }}>
+              <div style={{ lineHeight: 1.2 }}>
+                <div style={{ fontFamily: "'Open Sans', sans-serif", fontSize: "12px", fontWeight: 700, color: ORANGE, letterSpacing: "0.01em" }}>Adapt.</div>
+                <div style={{ fontFamily: "'Open Sans', sans-serif", fontSize: "9.5px", fontWeight: 700, color: SLATE, letterSpacing: "0.01em" }}>Brand Consultants</div>
+              </div>
+              <div style={{ fontFamily: "'Open Sans', sans-serif", fontSize: "34px", fontWeight: 800, color: ORANGE, lineHeight: 1, marginLeft: "3px" }}>A.</div>
+            </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
             <select value={selectedMonth} onChange={e => setSelectedMonth(e.target.value)} style={{ border: "1px solid #ddd", borderRadius: "6px", padding: "7px 10px", fontSize: "13px", background: "white", color: "#333", cursor: "pointer" }}>
@@ -605,11 +611,11 @@ export default function App() {
               <option>Mar 2026</option>
               <option>May 2026</option>
             </select>
-            <button onClick={() => setView("form")} style={{ background: OLIVE, color: "white", border: "none", borderRadius: "6px", padding: "8px 16px", fontSize: "13px", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}>
+            <button onClick={() => setView("form")} style={{ background: SLATE, color: "white", border: "none", borderRadius: "6px", padding: "8px 16px", fontSize: "13px", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}>
               + New Project Request
             </button>
             <button style={{ background: "white", color: "#555", border: "1px solid #ddd", borderRadius: "6px", padding: "8px 14px", fontSize: "13px", cursor: "pointer" }}>Refresh</button>
-            <button style={{ background: OLIVE, color: "white", border: "none", borderRadius: "6px", padding: "8px 14px", fontSize: "13px", cursor: "pointer" }}>Export CSV</button>
+            <button style={{ background: SLATE, color: "white", border: "none", borderRadius: "6px", padding: "8px 14px", fontSize: "13px", cursor: "pointer" }}>Export CSV</button>
           </div>
         </div>
       </div>
@@ -625,7 +631,7 @@ export default function App() {
             { label: "Points Used",            value: pointsUsed,             sub: `${usedPct}% of monthly points` },
             { label: "Points Remaining",       value: pointsRemaining,        sub: "Available this month" },
           ].map((card, i) => (
-            <div key={i} style={{ background: MAROON, borderRadius: "10px", padding: "1.25rem", color: "white" }}>
+            <div key={i} style={{ background: ORANGE, borderRadius: "10px", padding: "1.25rem", color: "white" }}>
               <p style={{ margin: "0 0 10px", fontSize: "10px", color: "rgba(255,255,255,0.7)", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 600, lineHeight: 1.3 }}>{card.label}</p>
               <p style={{ margin: "0 0 5px", fontSize: "38px", fontWeight: 700, lineHeight: 1 }}>{card.value}</p>
               <p style={{ margin: 0, fontSize: "12px", color: "rgba(255,255,255,0.6)" }}>{card.sub}</p>
@@ -641,14 +647,14 @@ export default function App() {
             <span>Budget: <strong style={{ color: "#1a1a1a" }}>259</strong></span>
           </div>
           <div style={{ background: "#eeeeee", borderRadius: "6px", height: "14px", overflow: "hidden", marginBottom: "6px" }}>
-            <div style={{ background: MAROON, width: `${usedPct}%`, height: "100%", borderRadius: "6px", transition: "width 0.4s ease" }} />
+            <div style={{ background: ORANGE, width: `${usedPct}%`, height: "100%", borderRadius: "6px", transition: "width 0.4s ease" }} />
           </div>
           <p style={{ margin: "0 0 16px", fontSize: "12px", color: "#888" }}>{usedPct}% of monthly points used</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}>
             {[
-              { label: "Cap",       value: MONTHLY_CAP,     color: MAROON },
+              { label: "Cap",       value: MONTHLY_CAP,     color: ORANGE },
               { label: "Used",      value: pointsUsed,      color: "#555" },
-              { label: "Remaining", value: pointsRemaining, color: MAROON },
+              { label: "Remaining", value: pointsRemaining, color: ORANGE },
             ].map(item => (
               <div key={item.label} style={{ textAlign: "center", padding: "14px", background: "#f9f9f9", borderRadius: "8px" }}>
                 <p style={{ margin: "0 0 4px", fontSize: "10px", color: "#aaa", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 600 }}>{item.label}</p>
@@ -667,7 +673,7 @@ export default function App() {
                 <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#888" }} angle={-30} textAnchor="end" interval={0} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: "#aaa" }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip contentStyle={{ fontSize: 12, borderRadius: "6px", border: "1px solid #eee" }} cursor={{ fill: "rgba(0,0,0,0.04)" }} />
-                <Bar dataKey="count" name="Projects" fill={MAROON} radius={[4, 4, 0, 0]} maxBarSize={44} />
+                <Bar dataKey="count" name="Projects" fill={ORANGE} radius={[4, 4, 0, 0]} maxBarSize={44} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -678,7 +684,7 @@ export default function App() {
                 <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#888" }} angle={-30} textAnchor="end" interval={0} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: "#aaa" }} axisLine={false} tickLine={false} />
                 <Tooltip contentStyle={{ fontSize: 12, borderRadius: "6px", border: "1px solid #eee" }} cursor={{ fill: "rgba(0,0,0,0.04)" }} />
-                <Bar dataKey="credits" name="Credits" fill={MAROON} radius={[4, 4, 0, 0]} maxBarSize={44} />
+                <Bar dataKey="credits" name="Credits" fill={ORANGE} radius={[4, 4, 0, 0]} maxBarSize={44} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -726,7 +732,7 @@ export default function App() {
                 const isApr = row.month === "Apr 2026";
                 return (
                   <tr key={row.month} style={{ borderBottom: "1px solid #f5f5f5", background: isApr ? "#FAFAF8" : i % 2 === 0 ? "white" : "#fafafa", fontWeight: isApr ? 600 : 400 }}>
-                    <td style={{ padding: "11px 20px", color: "#2a2a2a" }}>{row.month}{isApr && <span style={{ marginLeft: "8px", fontSize: "10px", background: MAROON, color: "white", padding: "2px 6px", borderRadius: "4px" }}>Current</span>}</td>
+                    <td style={{ padding: "11px 20px", color: "#2a2a2a" }}>{row.month}{isApr && <span style={{ marginLeft: "8px", fontSize: "10px", background: ORANGE, color: "white", padding: "2px 6px", borderRadius: "4px" }}>Current</span>}</td>
                     <td style={{ padding: "11px 20px", color: "#555" }}>{MONTHLY_CAP}</td>
                     <td style={{ padding: "11px 20px", color: "#555" }}>{row.used}</td>
                     <td style={{ padding: "11px 20px", fontWeight: 700, color: rem >= 0 ? "#2E7D32" : "#C62828" }}>{rem >= 0 ? rem : rem}</td>
