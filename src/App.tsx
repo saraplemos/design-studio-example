@@ -185,6 +185,7 @@ export default function App() {
   const [editDraft, setEditDraft]         = useState<{ clientRef: string; status: ProjectStatus; owner: string; brand: string; folderLink: string; notes: string }>({ clientRef: "", status: "Brief Received", owner: "", brand: "", folderLink: "", notes: "" });
 
   // Form state
+  const [formMonth, setFormMonth]           = useState("Apr 2026");
   const [formClientRef, setFormClientRef]   = useState("");
   const [folderLink, setFolderLink]         = useState("");
   const [formOwner, setFormOwner]           = useState(OWNERS[0]);
@@ -226,7 +227,8 @@ export default function App() {
   const dd = String(today.getDate()).padStart(2, "0");
   const mo = String(today.getMonth() + 1).padStart(2, "0");
   const yy = String(today.getFullYear()).slice(-2);
-  const newId = `${dd}${mo}${yy}_${String(aprProjects.length + 1).padStart(3, "0")}`;
+  const targetProjects = monthData[formMonth] || [];
+  const newId = `${dd}${mo}${yy}_${String(targetProjects.length + 1).padStart(3, "0")}`;
 
   const addFormDel = () => {
     setFormDels(prev => [...prev, { id: nextDelId, deliverableType: DEL_TYPES[0].label, type: "Creative", qty: 1 }]);
@@ -244,7 +246,7 @@ export default function App() {
 
   const handleCreate = () => {
     const newProjects: Project[] = formDels.map((d, i) => ({
-      id: i === 0 ? newId : `${dd}${mo}${yy}_${String(aprProjects.length + 1 + i).padStart(3, "0")}`,
+      id: i === 0 ? newId : `${dd}${mo}${yy}_${String(targetProjects.length + 1 + i).padStart(3, "0")}`,
       clientRef: formClientRef,
       deliverable: d.deliverableType,
       type: d.type,
@@ -257,8 +259,8 @@ export default function App() {
       folderLink: folderLink || undefined,
       notes: formNotes || undefined,
     }));
-    setMonthData(prev => ({ ...prev, "Apr 2026": [...newProjects, ...prev["Apr 2026"]] }));
-    setSelectedMonth("Apr 2026");
+    setMonthData(prev => ({ ...prev, [formMonth]: [...newProjects, ...(prev[formMonth] || [])] }));
+    setSelectedMonth(formMonth);
     setView("dashboard");
     setFormClientRef(""); setFolderLink(""); setFormOwnerText(""); setFormBrandText(""); setFormNotes("");
     setFormDels([{ id: 1, deliverableType: DEL_TYPES[0].label, type: "Creative", qty: 1 }]);
@@ -468,10 +470,12 @@ export default function App() {
 
               <div style={{ marginBottom: "16px" }}>
                 <label style={lbl}>Booking Month</label>
-                <select style={inp}>
-                  <option>Apr 2026 ({aprRemaining} credits remaining)</option>
-                  <option>May 2026 (259 credits remaining)</option>
-                  <option>Jun 2026 (259 credits remaining)</option>
+                <select value={formMonth} onChange={e => setFormMonth(e.target.value)} style={inp}>
+                  {["Apr 2026", "May 2026", "Jun 2026"].map(m => {
+                    const used = (monthData[m] || []).reduce((s, p) => s + p.credits, 0);
+                    const rem  = MONTHLY_CAP - used;
+                    return <option key={m} value={m}>{m} ({rem} credits remaining)</option>;
+                  })}
                 </select>
               </div>
 
@@ -549,7 +553,9 @@ export default function App() {
                 </div>
                 <p style={{ fontSize: "11px", color: "#aaa", margin: "0 0 16px", lineHeight: 1.6 }}>Final number of credits to be calculated once full brief submitted</p>
                 <div style={{ background: "#FEF3E2", border: "1px solid #F6AD55", borderRadius: "8px", padding: "12px 14px", marginBottom: "16px" }}>
-                  <span style={{ fontSize: "13px", fontWeight: 700, color: "#C05621" }}>Apr 2026 Remaining: {aprRemaining} credits</span>
+                  <span style={{ fontSize: "13px", fontWeight: 700, color: "#C05621" }}>
+                    {formMonth} Remaining: {MONTHLY_CAP - (monthData[formMonth] || []).reduce((s, p) => s + p.credits, 0)} credits
+                  </span>
                 </div>
                 <div style={{ fontSize: "12px", fontWeight: 700, color: "#555", marginBottom: "8px" }}>Next Steps</div>
                 <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "12px", color: "#777", lineHeight: 1.8 }}>
@@ -611,7 +617,7 @@ export default function App() {
               <option>Mar 2026</option>
               <option>May 2026</option>
             </select>
-            <button onClick={() => setView("form")} style={{ background: SLATE, color: "white", border: "none", borderRadius: "6px", padding: "8px 16px", fontSize: "13px", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}>
+            <button onClick={() => { setFormMonth(selectedMonth); setView("form"); }} style={{ background: SLATE, color: "white", border: "none", borderRadius: "6px", padding: "8px 16px", fontSize: "13px", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}>
               + New Project Request
             </button>
             <button style={{ background: "white", color: "#555", border: "1px solid #ddd", borderRadius: "6px", padding: "8px 14px", fontSize: "13px", cursor: "pointer" }}>Refresh</button>
